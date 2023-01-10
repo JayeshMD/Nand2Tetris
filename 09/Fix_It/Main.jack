@@ -1,0 +1,16 @@
+class Main{
+    function void main(){
+        var Start start;
+        var Game game;
+        var int play;
+
+        let play =1;
+        while(play=1){
+            //let start = Start.new();
+            let game = Game.new();
+            let play = game.run();
+            do game.dispose();
+        }
+        return;
+    }
+}

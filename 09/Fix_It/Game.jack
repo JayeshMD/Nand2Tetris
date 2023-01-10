@@ -1,0 +1,183 @@
+class Game{
+    field String ref_state;
+    field String status;
+    field int win;
+    field int curr_loc;
+    field char blank_char;
+    field int moves_total, moves_left;
+    field int mem0;
+    
+    constructor Game new(){
+        let status = "827163459";
+        let ref_state = "123456789";
+        let blank_char = 57;      // ASCII code of 9. 9 is treated as black block.
+        let win = 0;
+        let mem0 = 1026 ;
+        let moves_total = 100;
+        let moves_left = 100;
+        let curr_loc = find(status,"9");
+        //do Output.printInt(curr_loc);
+
+        do draw_board();
+        do Scoreboard.draw_scoreboard(moves_left, moves_total);
+        return this;
+    }
+
+    method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+    method void draw_board(){
+        
+        var Block blk;
+
+        var char ch;
+        var int i, len;
+        var int r,c;
+
+        let i = 0;
+        
+        let len = status.length();
+        do Screen.clearScreen();
+        do Screen.setColor(true);
+        do Screen.drawRectangle(0,0,255,255);
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(26,26,229,229);
+
+        do Screen.setColor(true);
+        do Screen.drawRectangle(29,29,226,226);
+
+
+        while(i<len){
+            let r = i/3;
+            let c = i - (r*3);
+            let ch = status.charAt(i);
+            let blk = Block.new(mem0, ch-48, r,c);
+            do blk.dispose();
+            let i = i + 1;
+
+        }
+        return;
+    }
+
+    method int find(String s_arg, String ch_arg) {
+        var int i, len;
+        var char ch;
+        let i = 0;
+        let len = s_arg.length();
+        let ch = ch_arg.charAt(0);
+
+        while(i<len){
+            if(ch= s_arg.charAt(i)){ return i; }
+            let i = i + 1;
+        }
+        return null;        
+    }
+
+    method int run(){
+        var char key;
+        var int row_curr, col_curr, blk_num;
+        var int direction, background;
+        var Block blk;
+        var int play, count;
+        var String status_local;
+        
+        //do Output.printInt(win);
+        let win = Game.compareString(status, ref_state);
+        
+        let background = 1;
+        
+        while( (win=0) & (moves_left>0)){
+            let key = 0;
+
+
+            while(key=0){
+                let key = Keyboard.keyPressed();
+            }
+            
+
+            if (key = 131) { let direction = 1; }   // up arrow
+            if (key = 133) { let direction = 2; }   // down arrow
+            if (key = 130) { let direction = 3; }   // left arrow
+            if (key = 132) { let direction = 4; }   // right arrow
+
+            let curr_loc = find(status,"9");
+            //do Output.printString(status);
+            //do Output.printChar(blank_char);
+            let row_curr = curr_loc/3;
+            let col_curr = curr_loc - (row_curr* 3);
+            //do Output.printInt(row_curr);
+
+            if((direction = 1) & (row_curr<2)){
+                let blk_num = status.charAt(curr_loc+3);
+                do status.setCharAt(curr_loc, blk_num);
+                do status.setCharAt(curr_loc+3, blank_char);
+                let blk = Block.new(mem0, blk_num-48, row_curr+1,col_curr);  // '0'=48 in ASCII
+                do blk.move(direction, background);
+                do blk.dispose();
+                let moves_left = moves_left -1;
+                do Scoreboard.update(moves_left);
+            }
+
+            if((direction = 2) & (row_curr>0)){
+                let blk_num = status.charAt(curr_loc-3);
+                do status.setCharAt(curr_loc, blk_num);
+                do status.setCharAt(curr_loc-3, blank_char);
+                let blk = Block.new(mem0, blk_num-48, row_curr-1,col_curr);  // '0'=48 in ASCII
+                do blk.move(direction, background);
+                do blk.dispose();
+                let moves_left = moves_left -1;
+                do Scoreboard.update(moves_left);
+            }
+
+            if((direction = 3) & (col_curr<2)){
+                let blk_num = status.charAt(curr_loc+1);
+                do status.setCharAt(curr_loc, blk_num);
+                do status.setCharAt(curr_loc+1, blank_char);
+                let blk = Block.new(mem0, blk_num-48, row_curr,col_curr+1);  // '0'=48 in ASCII
+                do blk.move(direction, background);
+                do blk.dispose();
+                let moves_left = moves_left -1;
+                do Scoreboard.update(moves_left);
+            }
+
+            if((direction = 4) & (col_curr>0)){
+                let blk_num = status.charAt(curr_loc-1);
+                do status.setCharAt(curr_loc, blk_num);
+                do status.setCharAt(curr_loc-1, blank_char);
+                let blk = Block.new(mem0, blk_num-48, row_curr,col_curr-1);  // '0'=48 in ASCII
+                do blk.move(direction, background);
+                do blk.dispose();
+                let moves_left = moves_left -1;
+                do Scoreboard.update(moves_left);
+            }
+
+            let key = 0;
+            let win = Game.compareString(status, ref_state);
+        }
+        
+        let play = End.panal(win);
+        return play;
+    }
+
+    function boolean compareString(String s1, String s2){
+        var int i, occ, len1, len2;
+        let len1 = s1.length();
+        let len2 = s2.length();
+
+        if((len1=len2)=false){ return false; }
+        else{
+            let i = 0;
+            while(i<len1){
+                if( (s1.charAt(i)=s2.charAt(i))=false ){ return false;}
+                let i = i+1;
+            }
+        }
+        return true;        
+    } 
+
+    
+
+}

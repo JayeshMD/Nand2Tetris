@@ -1,0 +1,87 @@
+class Start{
+    field String s1;
+    constructor Start new(){
+        let s1 = "10307004002008050060";
+        do start();
+        return this;
+    }
+
+    method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+    method void start(){
+        var char key;
+        var String title;
+        var int i, len, mem0_temp;
+
+        let title = "FIX IT";
+        let i = 0;
+        let mem0_temp = 2692;
+
+        do Screen.clearScreen();
+
+        let len = title.length();
+        let i = 0;
+        while(i<len){ 
+            do Graphics.draw(title.charAt(i),mem0_temp); 
+            let mem0_temp = mem0_temp+ 4;
+            let i = i + 1; 
+        }
+
+        let i = 0;
+        while(i<5){
+            do Start.animate(s1);
+            let i = i+1;
+        }
+
+        
+        
+        do Output.moveCursor(14,18);
+        do Output.printString("Press any key to continue ...");
+        while(key=0){
+            let key = Keyboard.keyPressed();
+        }
+        return;
+    }
+    
+    function void animate(String s1){
+        var Block blk;
+        var int i, row, col, len, blk_num, blk_prev, direction;
+        var int background; // background color 
+        var int mem0;
+
+        let len = s1.length();
+        let i=0;
+        let row = 0;
+        let col = 0;
+        let mem0 = 0;
+        let direction = 4; // 1:up, 2:down, 3:left, 4:right
+        let background = 0;
+
+        while(i<len){
+            let blk_num = s1.charAt(i);
+            
+            if(i>0){ do s1.setCharAt(i,blk_prev);}
+            
+            if(blk_num>48){ 
+                let blk = Block.new(mem0, blk_num-48, row, col);
+            }
+        
+            if (i<7)           { let col = col + 1; let direction=4;}
+            if((i>6)  & (i<10)){ let row = row + 1; let direction=2;}
+            if((i>9)  & (i<17)){ let col = col - 1; let direction=3;}
+            if((i>16) & (i<20)){ let row = row - 1; let direction=1;}
+
+            if(blk_num>48){ 
+                do blk.move(direction, background);
+                do blk.dispose();
+            }
+            let blk_prev = blk_num;
+            let i = i + 1;
+        }
+        do s1.setCharAt(0,blk_num);
+        return; 
+    }
+}

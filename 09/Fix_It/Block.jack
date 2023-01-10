@@ -1,0 +1,84 @@
+class Block{
+    field int num;
+    field int row;
+    field int col;
+    field int row_g;
+    field int col_g;
+    field int mem0;
+    field int t_wait;
+
+    constructor Block new(int mem0_arg, int num_arg, int row_arg, int col_arg){
+        let num = num_arg;
+        let row  = row_arg;
+        let col  = col_arg;
+
+        let mem0 = mem0_arg;
+        let t_wait = 100;
+
+        do draw_block();
+        return this; 
+    }
+
+    method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+    method void draw_block(){
+        var int row_offset;
+        var int col_offset;
+        var int mem_loc;
+
+        let col_offset = 4;
+        let row_offset = 2048;
+
+        let mem_loc = mem0 + (row* row_offset) + (col* col_offset);
+        do Graphics.draw(0, mem_loc);
+        do Graphics.draw(num, mem_loc);
+        return;
+    }
+
+    method void move(int direction, int background){
+        var int row_offset;
+        var int col_offset;
+        var int mem_loc;
+        var int i;
+        var int move;
+
+        let col_offset = 4;
+        let row_offset = 2048;
+
+        let i =0;   
+        let mem_loc = mem0 + (row* row_offset) + (col* col_offset);
+
+        if(background=0){do Graphics.draw(0, mem_loc);}
+        else{do Graphics.draw(1, mem_loc);}
+
+        if(direction=1){ let move = -512; let row = row -1;} // up
+        if(direction=2){ let move =  512; let row = row +1;} // down
+        if(direction=3){ let move =   -1; let col = col -1;} // left
+        if(direction=4){ let move =    1; let col = col +1;} // right
+        
+
+        while(i<4){
+            if(background=0){do Graphics.draw(0, mem_loc);}
+            else{do Graphics.draw(9, mem_loc);}
+            
+            let mem_loc = mem_loc + move;
+            do Graphics.draw(0, mem_loc);
+
+            do Graphics.draw(num, mem_loc);
+            let i = i + 1;
+            do Sys.wait(t_wait);
+        }
+        
+        return;
+    }
+
+    method void print_details(){
+        do Output.printString("num=");
+        do Output.printInt(num);
+        return;
+    }
+
+}
