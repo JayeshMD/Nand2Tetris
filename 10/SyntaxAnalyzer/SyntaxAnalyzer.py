@@ -5,7 +5,7 @@ msg = 'This program compiles the *.vm code.'
 
 parser = argparse.ArgumentParser(description = msg)
 parser.add_argument("f_path", help = "Give folder or file path.")
-args = parser.parse_args(["/Users/jayeshdhadphale/Desktop/All_jayesh/Study/My_Computer/nand2tetris/projects/10/test"])
+args = parser.parse_args(["/Users/jayeshdhadphale/Desktop/All_jayesh/Study/My_Computer/nand2tetris/projects/10/Square_copy"])
 
 # /Users/jayeshdhadphale/Desktop/All_jayesh/Study/My_Computer/nand2tetris/projects/10/test/
 
@@ -51,8 +51,8 @@ def remove_multi_line_comments(file_lines):
             loc_s = fl.find('/*')
             loc_e = fl.find('*/')
             
-            if loc_s > loc_e:
-                print("Correct the comment using syntax, /* Comment */")
+            # if loc_s > loc_e:
+            #     print("Correct the comment using syntax, /* Comment */")
             
             if loc_s==-1 :
                 # The comment has not started
@@ -160,8 +160,11 @@ def tokenizer(file_clean):
                 token_list_analysed.append(['stringConstant',token])
             else:
                 if token.isnumeric():
-                    xml_list.append('<integerConstant> ' + token  + ' </integerConstant>')
-                    token_list_analysed.append(['integerConstant',token])
+                    if 0<=int(token) or int(token)<=32767: 
+                        xml_list.append('<integerConstant> ' + token  + ' </integerConstant>')
+                        token_list_analysed.append(['integerConstant',token])
+                    else:
+                        print("Integer constant must be within [0,32767] range but received "+ token)
                 else:
                     xml_list.append('<identifier> ' + token  + ' </identifier>')
                     token_list_analysed.append(['identifier',token])
@@ -313,6 +316,10 @@ class CompilationEngine:
         self.parsed_list.append('<letStatement>')
         self.eat_var(['let'])
         self.eat_type(['identifier'])
+        if self.token_list_analysed[self.token_index][1] == '[':
+            self.eat_var(['['])
+            self.compileExpression()
+            self.eat_var([']'])
         self.eat_var(['='])
         self.compileExpression()
         self.eat_var([';'])
@@ -381,12 +388,58 @@ class CompilationEngine:
     def compileExpression(self):
         self.parsed_list.append('<expression>')
         self.compileTerm()
+        math_op = ['+', '-', '*', '/', '&', '|', '<', '>', '=']
+
+        math_op_dict = {'<': '&lt;', '>': '&gt;', '&': '&amp;'}
+
+        while self.token_list_analysed[self.token_index][1] in math_op:
+            if self.token_list_analysed[self.token_index][1] in math_op_dict.keys():
+                self.parsed_list.append('<'  +self.token_list_analysed[self.token_index][0]+'> ' 
+                                             +math_op_dict[self.token_list_analysed[self.token_index][1]]+ 
+                                        ' </'+self.token_list_analysed[self.token_index][0]+'>')
+                self.token_index += 1
+                self.compileTerm()
+            else:
+                self.eat_var(math_op)
+                self.compileTerm()
         self.parsed_list.append('</expression>')
         return
     
     def compileTerm(self):
         self.parsed_list.append('<term>')
-        self.eat_type(['identifier','keyword','integerConstant','stringConstant'])
+        if  self.token_list_analysed[self.token_index][0] in ['integerConstant', 'stringConstant']:
+            self.eat_type(['integerConstant', 'stringConstant'])
+        elif self.token_list_analysed[self.token_index][1]=='(':
+            self.eat_var(['('])
+            self.compileExpression()
+            self.eat_var([')'])
+        elif self.token_list_analysed[self.token_index][1] in ['-','~']:
+            self.eat_var(['-','~'])
+            self.compileTerm()
+        elif self.token_list_analysed[self.token_index][0] in ['keyword']:
+            self.eat_var(['true', 'false', 'null', 'this'])
+        elif self.token_list_analysed[self.token_index][0] in ['identifier']:
+            if self.token_list_analysed[self.token_index+1][1] == '[':
+                self.eat_type(['identifier'])
+                self.eat_var(['['])
+                self.compileExpression()
+                self.eat_var([']'])
+            elif self.token_list_analysed[self.token_index+1][1] == '(':
+                self.eat_type(['identifier'])
+                self.eat_var(['('])
+                self.compileExpressionList()
+                self.eat_var([')'])
+
+            elif self.token_list_analysed[self.token_index+1][1] == '.':
+                self.eat_type(['identifier'])
+                self.eat_var(['.'])
+                self.eat_type(['identifier'])
+                self.eat_var(['('])
+                self.compileExpressionList()
+                self.eat_var([')'])
+            else:
+                self.eat_type(['identifier'])
+        
         self.parsed_list.append('</term>')
         return
     
