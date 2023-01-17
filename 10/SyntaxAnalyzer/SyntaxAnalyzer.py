@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 import os
 import argparse
 
@@ -5,9 +7,7 @@ msg = 'This program compiles the *.vm code.'
 
 parser = argparse.ArgumentParser(description = msg)
 parser.add_argument("f_path", help = "Give folder or file path.")
-args = parser.parse_args(["/Users/jayeshdhadphale/Desktop/All_jayesh/Study/My_Computer/nand2tetris/projects/10/Square_copy"])
-
-# /Users/jayeshdhadphale/Desktop/All_jayesh/Study/My_Computer/nand2tetris/projects/10/test/
+args = parser.parse_args()
 
 file_path_inp = args.f_path
 
@@ -171,13 +171,6 @@ def tokenizer(file_clean):
             
     xml_list.append('</tokens>')
     return xml_list, token_list_analysed
-
-
-"""
-'class', 'constructor', 'function', 'method', 'field', 'static', 'var', 
-'int'  , 'char'       , 'boolean' , 'void'  , 'true' , 'false' , 'null',
-'this' , 'let'        , 'do'      , 'if'    , 'else' , 'while' , 'return'
-"""
 
 class CompilationEngine:
     def __init__(self, token_list_analysed):
