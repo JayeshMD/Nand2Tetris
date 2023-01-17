@@ -7,6 +7,8 @@ push constant 1
 eq
 not
 if-goto WHILE_END0
+call Start.new 0
+pop local 0
 call Game.new 0
 pop local 1
 push local 1

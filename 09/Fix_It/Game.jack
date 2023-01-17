@@ -8,7 +8,7 @@ class Game{
     field int mem0;
     
     constructor Game new(){
-        let status = "827163459";
+        let status = "671394258";
         let ref_state = "123456789";
         let blank_char = 57;      // ASCII code of 9. 9 is treated as black block.
         let win = 0;

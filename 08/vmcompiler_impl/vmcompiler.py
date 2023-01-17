@@ -3,7 +3,7 @@
 import os
 import argparse
 
-msg = 'This program compiles the *.vm code without brancing commands'
+msg = 'This program compiles the *.vm code.'
 
 
 
