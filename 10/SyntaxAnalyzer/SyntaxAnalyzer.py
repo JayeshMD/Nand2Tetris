@@ -127,7 +127,7 @@ def tokenizer(file_clean):
                  string_flag = not(string_flag)
             else:
                 if not(string_flag):
-                    if (char_element==' ') and len(word)>0:
+                    if ((char_element==' ') or (char_element=='\t')) and len(word)>0:
                         token_list.append(word)
                         word = ''
                     elif (char_element in symbols):
@@ -135,7 +135,7 @@ def tokenizer(file_clean):
                             token_list.append(word)
                             word = ''
                         token_list.append(char_element)
-                    elif (char_element!=' '): 
+                    elif (char_element!=' ') and (char_element!='\t'): 
                         word += char_element
                 else:
                     word += char_element
