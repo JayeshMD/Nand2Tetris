@@ -1,0 +1,72 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+    static Array ram;
+    static Array heap, freelist, freelist_end;
+    static int heap_base, heap_size;
+
+    /** Initializes the class. */
+    function void init() {
+        let ram = 0;
+        let heap_base = 2048;
+        let heap_size = 14335;   // 16383 to 2048, 0 to 14335 index 
+        let heap = heap_base;
+        let freelist = heap_base;
+        let freelist_end = heap_base;
+        let heap[0] = null;
+        let heap[1] = heap_size;
+        return;
+    }
+
+    /** Returns the RAM value at the given address. */
+    function int peek(int address) {
+        return ram[address];
+    }
+
+    /** Sets the RAM value at the given address to the given value. */
+    function void poke(int address, int value) {
+        let ram[address] = value;
+        return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. */
+    function int alloc(int size){
+        var int block;
+        var int this_seg;
+        var boolean assigned;
+
+        let this_seg = freelist;
+        let assigned = false;
+        while((this_seg>0) & (~assigned)){
+            if(ram[this_seg+1]>(size+2)){
+                let block = this_seg + ram[this_seg+1] - size;
+                let ram[block-1] = size;
+                let ram[this_seg+1] = ram[this_seg+1]-(size+2);  
+                let assigned = true;
+            }
+            else{
+                let this_seg = ram[this_seg]; 
+            }
+        }
+
+        return block;
+    }
+
+    /** De-allocates the given object (cast as an array) by making
+     *  it available for future allocations. */
+    function void deAlloc(Array o) {
+        let ram[freelist_end] = o-2;
+        let freelist_end = o-2;
+        let ram[freelist_end] = null;
+        return;
+    }    
+}

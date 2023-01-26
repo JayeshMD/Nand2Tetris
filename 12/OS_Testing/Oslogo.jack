@@ -1,0 +1,30 @@
+class Oslogo{
+    function void oslogo(){
+        
+        do Screen.drawCircle(255,128,40);
+        do Screen.setColor(false);
+        do Screen.drawCircle(255,128,30);
+        do Screen.setColor(true);
+
+        
+        do Screen.drawCircle(200,110,20);
+        do Screen.setColor(true);
+        do Screen.drawCircle(310,110,20);
+        
+
+        do Output.moveCursor(5,16);
+        do Output.printString("Hack Computer based on Nand2Tetris");
+
+        do Output.moveCursor(11,30);
+        do Output.printString("Jack");
+        do Output.moveCursor(12,31);
+        do Output.printString("OS");
+        
+        do Output.moveCursor(18,22);
+        do Output.printString("By Jayesh M Dhadphale");
+        do Output.moveCursor(20,20);
+        do Output.printString("Press any key to continue...");
+        while(Keyboard.keyPressed()=0){}
+        return;
+    }
+}
