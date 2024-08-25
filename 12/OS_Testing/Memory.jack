@@ -17,12 +17,13 @@ class Memory {
     function void init() {
         let ram = 0;
         let heap_base = 2048;
-        let heap_size = 14335;   // 16383 to 2048, 0 to 14335 index 
+        let heap_size = 14336;   // 2048 to 16383, heap_size = 16383 - 2048 +1;
+                                 // Free space = (16383 - 2048 + 1)- 2 = 14334
         let heap = heap_base;
         let freelist = heap_base;
         let freelist_end = heap_base;
         let heap[0] = null;
-        let heap[1] = heap_size;
+        let heap[1] = heap_size-2;
         return;
     }
 
@@ -48,7 +49,7 @@ class Memory {
         let assigned = false;
         while((this_seg>0) & (~assigned)){
             if(ram[this_seg+1]>(size+2)){
-                let block = this_seg + ram[this_seg+1] - size + 1;
+                let block = this_seg + ram[this_seg+1] - size + 2;
                 let ram[block-1] = size;
                 let ram[this_seg+1] = ram[this_seg+1]-(size+2);  
                 let assigned = true;
