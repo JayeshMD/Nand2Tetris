@@ -48,7 +48,7 @@ class Memory {
         let assigned = false;
         while((this_seg>0) & (~assigned)){
             if(ram[this_seg+1]>(size+2)){
-                let block = this_seg + ram[this_seg+1] - size;
+                let block = this_seg + ram[this_seg+1] - size + 1;
                 let ram[block-1] = size;
                 let ram[this_seg+1] = ram[this_seg+1]-(size+2);  
                 let assigned = true;
